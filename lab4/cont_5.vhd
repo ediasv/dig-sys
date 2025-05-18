@@ -1,0 +1,85 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity cont_5 is 
+  port(
+    i_clk        : in std_logic;
+    o_clk        : out std_logic;
+    segments_out : out std_logic_vector(6 downto 0)
+  );
+end entity cont_5;
+
+architecture hybrid of cont_5 is
+  component fsm_5
+    port(
+      x: in std_logic_vector(3 downto 0);
+      j, k: out std_logic_vector(3 downto 0)
+    );
+  end component;
+
+  component jk_ff
+    port(
+      clk  : in  std_logic;
+      j    : in  std_logic;
+      k    : in  std_logic;
+      clrn : in  std_logic; -- clear
+      prn  : in  std_logic; -- preset
+      q    : out std_logic
+    );
+  end component;
+
+  component hex_to_7_seg_decoder
+    port (
+      hex_in       : in  std_logic_vector(3 downto 0); 
+      segments_out : out std_logic_vector(6 downto 0) 
+    );
+  end component;
+
+  signal x_internal : std_logic_vector(3 downto 0) := "0000";
+  signal j_internal : std_logic_vector(3 downto 0) := "0000";
+  signal k_internal : std_logic_vector(3 downto 0) := "0000";
+  signal tc : std_logic := '0';
+  signal tc_d : std_logic := '0';
+  signal o_clk_internal : std_logic := '0';
+begin
+  hex_to_7_seg_decoder_inst: hex_to_7_seg_decoder
+    port map(
+      hex_in => x_internal,
+      segments_out => segments_out
+    );
+
+  fsm_5_inst: fsm_5
+    port map(
+      x => x_internal,
+      j => j_internal,
+      k => k_internal
+    );
+
+  jk_ff_gen: for i in 0 to 3 generate
+    jk_ff_inst: jk_ff
+    port map (
+      clk  => i_clk,
+      j    => j_internal(i),
+      k    => k_internal(i),
+      clrn => '1',
+      prn  => '1',
+      q    => x_internal(i)
+    );
+  end generate jk_ff_gen;
+
+  tc <= '1' when x_internal = "0101" else '0';
+
+  process(i_clk)
+  begin
+    if rising_edge(i_clk) then 
+      if tc_d = '1' and tc = '0' then 
+        o_clk_internal <= '1';
+      else
+        o_clk_internal <= '0';
+      end if;
+      tc_d <= tc;
+    end if;
+  end process;
+
+  o_clk <= o_clk_internal;
+end architecture hybrid;
