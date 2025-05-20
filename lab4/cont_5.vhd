@@ -3,10 +3,9 @@ use ieee.std_logic_1164.all;
 
 entity cont_5 is 
   port(
-    i_clk        : in std_logic;
-    o_clk        : out std_logic;
-    o_x          : out std_logic_vector(3 downto 0);
-    segments_out : out std_logic_vector(6 downto 0)
+    i_clk : in std_logic;
+    o_clk : out std_logic;
+    o_x   : out std_logic_vector(3 downto 0)
   );
 end entity cont_5;
 
