@@ -5,6 +5,7 @@ entity cont_5 is
   port(
     i_clk        : in std_logic;
     o_clk        : out std_logic;
+    o_x          : out std_logic_vector(3 downto 0);
     segments_out : out std_logic_vector(6 downto 0)
   );
 end entity cont_5;
@@ -12,8 +13,9 @@ end entity cont_5;
 architecture hybrid of cont_5 is
   component fsm_5
     port(
-      x: in std_logic_vector(3 downto 0);
-      j, k: out std_logic_vector(3 downto 0)
+      x : in std_logic_vector(3 downto 0);
+      j : out std_logic_vector(3 downto 0);
+      k : out std_logic_vector(3 downto 0)
     );
   end component;
 
@@ -28,26 +30,13 @@ architecture hybrid of cont_5 is
     );
   end component;
 
-  component hex_to_7_seg_decoder
-    port (
-      hex_in       : in  std_logic_vector(3 downto 0); 
-      segments_out : out std_logic_vector(6 downto 0) 
-    );
-  end component;
-
-  signal x_internal : std_logic_vector(3 downto 0) := "0000";
-  signal j_internal : std_logic_vector(3 downto 0) := "0000";
-  signal k_internal : std_logic_vector(3 downto 0) := "0000";
-  signal tc : std_logic := '0';
-  signal tc_d : std_logic := '0';
+  signal x_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal j_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal k_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal tc             : std_logic := '0';
+  signal tc_d           : std_logic := '0';
   signal o_clk_internal : std_logic := '0';
 begin
-  hex_to_7_seg_decoder_inst: hex_to_7_seg_decoder
-    port map(
-      hex_in => x_internal,
-      segments_out => segments_out
-    );
-
   fsm_5_inst: fsm_5
     port map(
       x => x_internal,
@@ -67,6 +56,8 @@ begin
     );
   end generate jk_ff_gen;
 
+  --------------------------------------------------------------------------
+  -- logica para mandar um pulso quando a maquina de estados terminar um loop
   tc <= '1' when x_internal = "0101" else '0';
 
   process(i_clk)
@@ -80,6 +71,8 @@ begin
       tc_d <= tc;
     end if;
   end process;
+  --------------------------------------------------------------------------
 
   o_clk <= o_clk_internal;
+  o_x <= x_internal;
 end architecture hybrid;

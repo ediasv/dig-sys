@@ -3,17 +3,19 @@ use ieee.std_logic_1164.all;
 
 entity cont_9 is
   port (
-    i_clk : in std_logic;
-    o_clk : out std_logic;
+    i_clk        : in std_logic;
+    o_clk        : out std_logic;
+    o_x          : out std_logic_vector(3 downto 0);
     segments_out : out std_logic_vector(6 downto 0)
   );
 end entity cont_9;
 
-architecture behavioral of cont_9 is
+architecture hybrid of cont_9 is
   component fsm_9
     port(
-      x    : in std_logic_vector(3 downto 0);
-      j, k : out std_logic_vector(3 downto 0)
+      x : in std_logic_vector(3 downto 0);
+      j : out std_logic_vector(3 downto 0);
+      k : out std_logic_vector(3 downto 0)
     );
   end component;
 
@@ -28,23 +30,13 @@ architecture behavioral of cont_9 is
     );
   end component;
 
-  component hex_to_7_seg_decoder
-    port (
-      hex_in       : in  std_logic_vector(3 downto 0); 
-      segments_out : out std_logic_vector(6 downto 0) 
-    );
-  end component;
-
-  signal x_internal : std_logic_vector(3 downto 0) := "0000";
-  signal j_internal, k_internal : std_logic_vector(3 downto 0) := "0000";
-  signal tc, tc_d : std_logic := '0';
+  signal x_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal j_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal k_internal     : std_logic_vector(3 downto 0) := "0000";
+  signal tc             : std_logic := '0';
+  signal tc_d           : std_logic := '0';
+  signal o_clk_internal : std_logic := '0';
 begin
-  hex_to_7_seg_decoder_inst: hex_to_7_seg_decoder
-    port map(
-      hex_in => x_internal,
-      segments_out => segments_out
-    );
-
   fsm_9_inst : fsm_9
   port map(
     x => x_internal,
@@ -64,18 +56,23 @@ begin
     );
   end generate jk_ff_gen;
 
+  --------------------------------------------------------------------------
+  -- logica para mandar um pulso quando a maquina de estados terminar um loop
   tc <= '1' when x_internal = "1001" else '0';
 
   process(i_clk)
   begin
     if rising_edge(i_clk) then 
       if tc_d = '1' and tc = '0' then 
-        o_clk <= '1';
+        o_clk_internal <= '1';
       else
-        o_clk <= '0';
+        o_clk_internal <= '0';
       end if;
-      tc_d <=tc;
+      tc_d <= tc;
     end if;
   end process;
+  --------------------------------------------------------------------------
 
-end architecture behavioral;
+  o_clk <= o_clk_internal;
+  o_x <= x_internal;
+end architecture hybrid;

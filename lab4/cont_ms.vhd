@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity cont_999 is
+entity cont_ms is
   port (
     i_clk : in std_logic;
     o_clk : out std_logic;
@@ -9,7 +9,7 @@ entity cont_999 is
   );
 end entity;
 
-architecture behavioral of cont_999 is
+architecture hybrid of cont_ms is
   component cont_9
     port(
       i_clk : in std_logic;
@@ -41,4 +41,4 @@ begin
       o_clk => o_clk,
       segments_out => segments_out(20 downto 14)
     );
-end architecture behavioral;
+end architecture hybrid;

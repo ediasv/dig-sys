@@ -28,17 +28,17 @@ architecture behavioral of cont_59 is
 
   signal internal_clk : std_logic := '0';
 begin
-  cont_5_inst: cont_5
-    port map(
+  sec_units : cont_9
+    port map (
       i_clk => i_clk,
       o_clk => internal_clk,
-      segments_out => segments_out(6 downto 0)
+      segments_out => segments_out(13 downto 7)
     );
 
-  cont_9_inst : cont_9
-    port map (
+  sec_tens : cont_5
+    port map(
       i_clk => internal_clk,
       o_clk => o_clk,
-      segments_out => segments_out(13 downto 7)
+      segments_out => segments_out(6 downto 0)
     );
 end architecture behavioral;
