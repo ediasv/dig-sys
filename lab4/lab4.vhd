@@ -86,21 +86,19 @@ architecture hybrid of lab4 is
   signal pause_and           : std_logic := '0';
   signal pause_jk            : std_logic := '0';
 
+  signal ms_unit_internal : std_logic_vector(3 downto 0);
+  signal ms_tens_internal : std_logic_vector(3 downto 0);
+  signal ms_hundreds_internal : std_logic_vector(3 downto 0);
+  signal sec_unit_internal : std_logic_vector(3 downto 0);
+  signal sec_tens_internal : std_logic_vector(3 downto 0);
+  signal min_internal : std_logic_vector(3 downto 0);
+
   signal clk_converted : std_logic;
 
+  signal sec_out_clock : std_logic := '0';
+  signal ms_out_clock : std_logic := '0';
+
 begin
-
-  rst_internal <= not A7;
-  pb0_internal <= not B8;
-
-  pause_and <= clk_converted and pause_jk;
-
-  process(B8, pause_from_detector)
-  begin
-    if (rising_edge(B8) or rising_edge(pause_from_detector)) then 
-      pause_xor <= B8 xor pause_from_detector; 
-    end if;
-  end process;
 
   pause_jkff_inst : jk_ff
    port map(
@@ -110,6 +108,103 @@ begin
       clrn => '1',
       prn  => '1',
       q    => pause_jk
+  );
+
+  rst_internal <= not A7;
+  pb0_internal <= not B8;
+
+  process(B8, pause_from_detector)
+  begin
+    if (rising_edge(B8) or rising_edge(pause_from_detector)) then 
+      pause_xor <= B8 xor pause_from_detector; 
+    end if;
+  end process;
+
+  clocks_inst: clocks
+   port map(
+      switch => C10,
+      rst => A7,
+      i_clk => N14,
+      o_clk => clk_converted
+  );
+ 
+  pause_and <= clk_converted and pause_jk;
+
+  pause_detector_inst: pause_detector
+   port map(
+      ms_unit => ms_unit_internal,
+      ms_tens => ms_tens_internal,
+      ms_hundreds => ms_hundreds_internal,
+      sec_unit => sec_unit_internal,
+      sec_tens => sec_tens_internal,
+      min => min_internal,
+      pause => pause_from_detector
+  );
+
+  ----------------------------------------------------------
+  --------------- DECODERS ---------------------------------
+
+  hex0: hex_to_7_seg_decoder
+   port map(
+      hex_in => ms_unit_internal,
+      segments_out => HEX(6 downto 0)
+  );
+
+  hex1: hex_to_7_seg_decoder
+   port map(
+      hex_in => ms_tens_internal,
+      segments_out => HEX(13 downto 7)
+  );
+
+  hex2: hex_to_7_seg_decoder
+   port map(
+      hex_in => ms_hundreds_internal,
+      segments_out => HEX(20 downto 14)
+  );
+
+  hex3: hex_to_7_seg_decoder
+   port map(
+      hex_in => sec_unit_internal,
+      segments_out => HEX(27 downto 21)
+  );
+
+  hex4: hex_to_7_seg_decoder
+   port map(
+      hex_in => sec_tens_internal,
+      segments_out => HEX(34 downto 28)
+  );
+
+  hex5: hex_to_7_seg_decoder
+   port map(
+      hex_in => min_internal,
+      segments_out => HEX(41 downto 35)
+  );
+
+  ----------------------------------------------------------
+  --------------- CONTADORES ---------------------------------
+
+  min: cont_9
+   port map(
+      i_clk => sec_out_clock,
+      o_clk => '0',
+      o_x => min_internal
+  );
+
+  cont_secs_inst: cont_secs
+   port map(
+      i_clk => ms_out_clock,
+      o_clk => sec_out_clock,
+      sec_units => sec_unit_internal,
+      sec_tens => sec_tens_internal
+  );
+
+  cont_ms_inst: cont_ms
+   port map(
+      i_clk => clk_converted,
+      o_clk => ms_out_clock,
+      ms_unit => ms_unit_internal,
+      ms_tens => ms_tens_internal,
+      ms_hundreds => ms_hundreds_internal
   );
 
 end architecture hybrid;
