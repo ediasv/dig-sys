@@ -62,7 +62,7 @@ begin
 
   process(i_clk)
   begin
-    if rising_edge(i_clk) then 
+    if falling_edge(i_clk) then 
       if tc_d = '1' and tc = '0' then 
         o_clk_internal <= '1';
       else

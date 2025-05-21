@@ -81,14 +81,6 @@ architecture hybrid of lab4 is
     );
   end component;
 
-  signal rst_internal : std_logic := '0';
-  signal pb0_internal : std_logic := '0';
-
-  signal pause_xor           : std_logic := '0';
-  signal pause_from_detector : std_logic := '0';
-  signal pause_and           : std_logic := '0';
-  signal pause_jk            : std_logic := '0';
-
   signal ms_unit_internal : std_logic_vector(3 downto 0);
   signal ms_tens_internal : std_logic_vector(3 downto 0);
   signal ms_hundreds_internal : std_logic_vector(3 downto 0);
@@ -96,18 +88,34 @@ architecture hybrid of lab4 is
   signal sec_tens_internal : std_logic_vector(3 downto 0);
   signal min_internal : std_logic_vector(3 downto 0);
 
-  signal clk_converted : std_logic;
+  signal clk_internal : std_logic;
 
   signal sec_out_clock : std_logic := '0';
   signal ms_out_clock : std_logic := '0';
 
-  signal should_pause : std_logic := '1';
-  signal prev_should_pause : std_logic := '1';
+  signal pause_sync, pause_prev : std_logic := '0';
+  signal b8_sync, b8_prev : std_logic := '0';
+  signal toggle_clk           : std_logic := '0';
+  signal pause_from_detector : std_logic := '0';
+  signal pause_jk            : std_logic := '0';  
 begin
+
+process(N14)
+begin
+    if rising_edge(N14) then
+        b8_prev <= b8_sync;
+        b8_sync <= B8;
+
+        pause_prev <= pause_sync;
+        pause_sync <= pause_from_detector;
+
+        toggle_clk <= (b8_sync and not b8_prev) xor (pause_sync and not pause_prev);
+    end if;
+end process;
 
   pause_jkff_inst : jk_ff
    port map(
-      clk => pause_xor,
+      clk => toggle_clk,
       j    => '1',
       k    => '1',
       clrn => '1',
@@ -115,21 +123,14 @@ begin
       q    => pause_jk
   );
 
-  rst_internal <= not A7;
-  pb0_internal <= not B8;
-
-  pause_xor <= pb0_internal xor pause_from_detector;
-
   clocks_inst: clocks
    port map(
       switch => C10,
-      rst => A7,
+      rst => not A7,
       i_clk => N14,
-      o_clk => clk_converted
+      o_clk => clk_internal
   );
  
-  pause_and <= clk_converted and pause_jk;
-
   pause_detector_inst: pause_detector
    port map(
       ms_unit => ms_unit_internal,
@@ -202,7 +203,7 @@ begin
 
   cont_ms_inst: cont_ms
    port map(
-      i_clk => clk_converted,
+      i_clk => clk_internal and not pause_jk,
       rst => A7,
       o_clk => ms_out_clock,
       ms_unit => ms_unit_internal,

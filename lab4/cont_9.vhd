@@ -36,7 +36,9 @@ architecture hybrid of cont_9 is
   signal tc             : std_logic := '0';
   signal tc_d           : std_logic := '0';
   signal o_clk_internal : std_logic := '0';
+
 begin
+
   fsm_9_inst : fsm_9
   port map(
     x => x_internal,
@@ -62,7 +64,7 @@ begin
 
   process(i_clk)
   begin
-    if rising_edge(i_clk) then 
+    if falling_edge(i_clk) then 
       if tc_d = '1' and tc = '0' then 
         o_clk_internal <= '1';
       else
