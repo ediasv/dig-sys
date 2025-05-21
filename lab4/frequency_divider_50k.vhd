@@ -12,7 +12,7 @@ end entity clk_50khz;
 
 architecture behavioral of clk_50khz is
 
-  signal count: integer:=1;
+  signal count: integer := 1;
   signal clk_internal : std_logic := '0';
   
 begin
