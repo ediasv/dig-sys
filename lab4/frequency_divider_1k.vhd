@@ -4,9 +4,9 @@ use ieee.numeric_std.all;
 
 entity clk_1khz is
 	port(
-    i_clk: in std_logic; -- Pin connected to P11 (N14)
-    rst: in std_logic;
-    o_clk: out std_logic -- Can check it using PIN A8 - LEDR0
+    i_clk : in std_logic; -- Pin connected to P11 (N14)
+    rst   : in std_logic;
+    o_clk : out std_logic -- Can check it using PIN A8 - LEDR0
   );
 
 end entity clk_1khz;
