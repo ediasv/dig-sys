@@ -23,7 +23,7 @@ begin
     elsif prn = '0' then
       q_reg <= '1';
     elsif rising_edge(clk) then
-      case (j & k) is
+      case std_logic_vector'(j & k) is
         when "00" => q_reg <= q_reg;
         when "01" => q_reg <= '0';
         when "10" => q_reg <= '1';

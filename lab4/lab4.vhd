@@ -15,6 +15,7 @@ architecture hybrid of lab4 is
   component cont_9
     port(
       i_clk : in std_logic;
+      rst   : in std_logic;
       o_clk : out std_logic;
       o_x   : out std_logic_vector(3 downto 0)
     );
@@ -23,6 +24,7 @@ architecture hybrid of lab4 is
   component cont_ms
     port (
       i_clk       : in std_logic;
+      rst         : in std_logic;
       o_clk       : out std_logic;
       ms_unit     : out std_logic_vector(3 downto 0);
       ms_tens     : out std_logic_vector(3 downto 0);
@@ -33,6 +35,7 @@ architecture hybrid of lab4 is
   component cont_secs
     port (
       i_clk     : in std_logic;
+      rst       : in std_logic;
       o_clk     : out std_logic;
       sec_units : out std_logic_vector(3 downto 0);
       sec_tens  : out std_logic_vector(3 downto 0)
@@ -98,6 +101,8 @@ architecture hybrid of lab4 is
   signal sec_out_clock : std_logic := '0';
   signal ms_out_clock : std_logic := '0';
 
+  signal should_pause : std_logic := '1';
+  signal prev_should_pause : std_logic := '1';
 begin
 
   pause_jkff_inst : jk_ff
@@ -113,12 +118,7 @@ begin
   rst_internal <= not A7;
   pb0_internal <= not B8;
 
-  process(B8, pause_from_detector)
-  begin
-    if (rising_edge(B8) or rising_edge(pause_from_detector)) then 
-      pause_xor <= B8 xor pause_from_detector; 
-    end if;
-  end process;
+  pause_xor <= pb0_internal xor pause_from_detector;
 
   clocks_inst: clocks
    port map(
@@ -186,13 +186,15 @@ begin
   min: cont_9
    port map(
       i_clk => sec_out_clock,
-      o_clk => '0',
+      rst => A7,
+      o_clk => open,
       o_x => min_internal
   );
 
   cont_secs_inst: cont_secs
    port map(
       i_clk => ms_out_clock,
+      rst => A7,
       o_clk => sec_out_clock,
       sec_units => sec_unit_internal,
       sec_tens => sec_tens_internal
@@ -201,6 +203,7 @@ begin
   cont_ms_inst: cont_ms
    port map(
       i_clk => clk_converted,
+      rst => A7,
       o_clk => ms_out_clock,
       ms_unit => ms_unit_internal,
       ms_tens => ms_tens_internal,

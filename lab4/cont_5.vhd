@@ -4,6 +4,7 @@ use ieee.std_logic_1164.all;
 entity cont_5 is 
   port(
     i_clk : in std_logic;
+    rst   : in std_logic;
     o_clk : out std_logic;
     o_x   : out std_logic_vector(3 downto 0)
   );
@@ -49,7 +50,7 @@ begin
       clk  => i_clk,
       j    => j_internal(i),
       k    => k_internal(i),
-      clrn => '1',
+      clrn => rst,
       prn  => '1',
       q    => x_internal(i)
     );

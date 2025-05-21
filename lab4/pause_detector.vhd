@@ -27,9 +27,9 @@ begin
       sec_tens = "0101" and
       min = "0010"
     ) then
-      pause <= '1';
+      pause_internal <= '1';
     else
-      pause <= '0';
+      pause_internal <= '0';
     end if;
   end process;
 
