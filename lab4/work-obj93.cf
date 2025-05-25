@@ -1,7 +1,7 @@
 v 4
-file . "frequency_divider_tb.vhd" "8eaac1148224e5f7af6ddebb000c906f64fef370" "20250518191734.631":
-  entity frequency_divider_tb at 1( 0) + 0 on 93;
-  architecture testbench of frequency_divider_tb at 7( 109) + 0 on 94;
-file . "frequency_divider.vhd" "57267d0770e8f8be8b75146e123dd0fd5fa8b197" "20250518191734.631":
-  entity clk_1khz at 1( 0) + 0 on 91;
-  architecture behavioral of clk_1khz at 14( 279) + 0 on 92;
+file . "frequency_divider_1k.vhd" "f29479f7c9fb0ce9d3d6ef0264b9362f1a15c2b5" "20250521171542.845":
+  entity clk_1khz at 1( 0) + 0 on 95;
+  architecture behavioral of clk_1khz at 14( 282) + 0 on 96;
+file . "frequency_divider_tb.vhd" "8eaac1148224e5f7af6ddebb000c906f64fef370" "20250521171542.845":
+  entity frequency_divider_tb at 1( 0) + 0 on 97;
+  architecture testbench of frequency_divider_tb at 7( 109) + 0 on 98;

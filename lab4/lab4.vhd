@@ -100,18 +100,18 @@ architecture hybrid of lab4 is
   signal pause_jk            : std_logic := '0';  
 begin
 
-process(N14)
-begin
-    if rising_edge(N14) then
-        b8_prev <= b8_sync;
-        b8_sync <= B8;
+  process(N14)
+  begin
+      if rising_edge(N14) then
+          b8_prev <= b8_sync;
+          b8_sync <= B8;
 
-        pause_prev <= pause_sync;
-        pause_sync <= pause_from_detector;
+          pause_prev <= pause_sync;
+          pause_sync <= pause_from_detector;
 
-        toggle_clk <= (b8_sync and not b8_prev) xor (pause_sync and not pause_prev);
-    end if;
-end process;
+          toggle_clk <= (b8_sync and not b8_prev) xor (pause_sync and not pause_prev);
+      end if;
+  end process;
 
   pause_jkff_inst : jk_ff
    port map(
