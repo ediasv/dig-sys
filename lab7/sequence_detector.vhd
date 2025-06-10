@@ -1,0 +1,23 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity sequence_detector is
+  port(
+    i_data : in std_logic;
+    i_x    : in std_logic_vector(2 downto 0);
+    o_j    : out std_logic_vector(2 downto 0);
+    o_k    : out std_logic_vector(2 downto 0)
+  );
+end entity;
+
+architecture behavioral of sequence_detector is
+begin
+
+  o_j(0) <= not i_data;
+  o_k(0) <= i_data or i_x(1);
+  o_j(1) <= (i_data and i_x(2)) or (i_data and i_x(0));
+  o_k(1) <= (not i_data and i_x(0)) or (i_data and not i_x(0));
+  o_j(2) <= (not i_data) and i_x(1) and i_x(0);
+  o_k(2) <= (not i_data and not i_x(1) and i_x(0)) or (i_data and not i_x(1) and not i_x(0)) or (i_data and i_x(1));
+
+end architecture behavioral;

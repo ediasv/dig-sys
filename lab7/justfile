@@ -1,0 +1,15 @@
+piso:
+  @echo "==> Compilando arquivos VHDL..."
+  ghdl -a piso_register.vhd piso_register_tb.vhd
+  @echo "==> Elaborando o design..."
+  ghdl -e piso_register_tb
+  @echo "==> Rodando a simulação..."
+  ghdl -r piso_register_tb --wave=piso_register_tb.ghw
+
+cont:
+  @echo "==> Compilando arquivos VHDL..."
+  ghdl -a contador_9_bits.vhd contador_9_bits_tb.vhd
+  @echo "==> Elaborando o design..."
+  ghdl -e contador_9_bits_tb
+  @echo "==> Rodando a simulação..."
+  ghdl -r contador_9_bits_tb --wave=contador_9_bits_tb.ghw
