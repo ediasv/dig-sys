@@ -15,15 +15,10 @@ end entity contador_9bits;
 -- A Arquitetura descreve o funcionamento interno do componente.
 architecture rtl of contador_9bits is
 
-    -- Sinal interno para armazenar o valor da contagem.
-    -- Usamos um sinal interno porque portas do tipo 'out' não podem ser lidas
-    -- dentro da arquitetura. O tipo 'unsigned' facilita as operações aritméticas.
     signal count_reg : unsigned(8 downto 0);
 
 begin
 
-    -- Processo síncrono que descreve o comportamento do contador.
-    -- A lista de sensibilidade contém 'clk' e 'reset', pois o reset é assíncrono.
     process (clk, reset)
     begin
         -- 1. Lógica de Reset (Assíncrono)
