@@ -1,2 +1,11 @@
 standard = "2008"
+
 [libraries]
+work.files = [
+    "lab4/*.vhd",
+    "lab6/*.vhd",
+    "lab7/*.vhd",
+    "p1_q1/*.vhd",
+    "p1_q2/*.vhd",
+    "proj_final/*.vhd",
+]
